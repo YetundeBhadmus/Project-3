@@ -54,7 +54,7 @@ Ran the command below to verify that the `Todo` directory is created with `ls` c
 
 Screenshot Below
 
-![Make dir and list](./Images/Make-directory.png)
+![Make dir and list](./Images/6-Make-directory.png)
 
 Changed current directory to the newly created one:
 
@@ -127,7 +127,7 @@ Opened terminal in the same directory as  index.js file and typed:
 
 Screenshot Below
 
-![Node](./Images/Nodejs.png)
+![Node](./Images/11-Nodejs.png)
 
 Open port 5000 in EC2 Security Groups; create an inbound rule to open TCP port 5000
 
@@ -282,8 +282,6 @@ Created a file in  Todo directory and name it .env. using the command below
 
 `touch .env`
 `vi .env`
-
-
 
 
 
