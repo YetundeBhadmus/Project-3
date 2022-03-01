@@ -275,13 +275,312 @@ Screenshot Below
 
 ![Update Routes](./Images/18-Update-Routes.png)
 
-Created a MongoDB database and collection inside mLab
+- Created a MongoDB database and collection inside mLab
 
-Created a file in  Todo directory and name it .env. using the command below
+- Created a file in  Todo directory and name it .env. using the command below
 
 
 `touch .env`
 `vi .env`
+
+- Added the connection string to access the database in it, just as below:
+
+DB = mongodb+srv://Yetunde_Bhadmus:Sanguine123@cluster0.raxzb.mongodb.net/YetundeP3DB?retryWrites=true&w=majority
+
+Screenshot Below
+
+![Add Connection](./Images/18--DB.png)
+
+- updated the index.js to reflect the use of .env so that Node.js can connect to the database i.e deleting existing content in the file, and update it with the entire code below.
+
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const routes = require('./routes/api');
+const path = require('path');
+require('dotenv').config();
+
+const app = express();
+
+const port = process.env.PORT || 5000;
+
+//connect to the database
+mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => console.log(`Database connected successfully`))
+.catch(err => console.log(err));
+
+//since mongoose promise is depreciated, we overide it with node's promise
+mongoose.Promise = global.Promise;
+
+app.use((req, res, next) => {
+res.header("Access-Control-Allow-Origin", "\*");
+res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+next();
+});
+
+app.use(bodyParser.json());
+
+app.use('/api', routes);
+
+app.use((err, req, res, next) => {
+console.log(err);
+next();
+});
+
+app.listen(port, () => {
+console.log(`Server running on port ${port}`)
+});
+ 
+Screenshot Below
+![Update Vim(./Images/19-Vim4.png)
+
+Saved then Started server using the command:
+
+`node index.js`
+
+see result in screenshot below
+
+![Succesful DB](./Images/20-Database-Connected.png)
+
+- Open  Postman, create a POST request to the API http://34.201.245.132:5000/api/todos
+
+See Screenshots below
+![Postman](./Images/21-Postman.png)
+
+![Postman 2](./Images/22-Postman-Body.png)
+
+
+Created a GET request to your API on http://34.201.245.132:5000/api/todos. This request retrieves all existing records from the To-do application
+
+Screenshot below
+
+![Postman3](./Images/23-getpost.png)
+
+STEP 2 – FRONTEND CREATION
+
+- In the same root directory as my backend code, which is the Todo directory, I ran the code below
+
+` npx create-react-app client`
+
+Screenshot below
+
+![Create React app](./Images/24-Create-react-app.png)
+
+- Install concurrently using the code below
+
+` npm install concurrently --save-dev`
+
+![Install Concurrently](./Images/25-Install-save-dev.png)
+
+- Install nodemon using the code below
+
+` npm install nodemon --save-dev`
+
+![Install Nodemon](./Images/26-install-nodemon.png)
+
+In the Todo folder package.json file was opened. changed were made. See screenshot below
+
+![VI- Edit](./Images/27-edit-package.json.png)
+
+- Change directory to ‘client’ using the command below, 
+
+` cd client`
+
+- Open the package.json file using the command below, 
+
+` vi package.json`
+
+- Added the key value pair in the package.json file "proxy": "http://localhost:5000".
+
+![VI-Edit](./Images/28-VI.png)
+
+- Changed Directory to back to the Todo folder
+
+` cd ..`
+
+![Run Dev](./Images/29-npm-rundev.png)
+
+- Opened TCP port 3000 on EC2 by adding a new Security Group rule
+
+See screenshot below of the web page after adding security group on EC2 instance
+
+
+![React](./Images/30-Reactpage.png)
+
+
+        Creating React Components
+
+From Todo directory ran 
+
+`cd client`
+
+Moved to the src directory with
+
+`cd src`
+
+Inside the src folder another folder called components was created with
+
+`mkdir components`
+
+Moved into the components directory with
+
+`cd components`
+
+Inside ‘components’ directory I created three files Input.js, ListTodo.js and Todo.js. with
+
+`touch Input.js ListTodo.js Todo.js`
+
+Opened Input.js file
+
+`vi Input.js`
+ See screenshot below
+
+![Series](./Images/31-Series.png)
+
+Edited the following 
+
+import React, { Component } from 'react';
+import axios from 'axios';
+
+class Input extends Component {
+
+state = {
+action: ""
+}
+
+addTodo = () => {
+const task = {action: this.state.action}
+
+    if(task.action && task.action.length > 0){
+      axios.post('/api/todos', task)
+        .then(res => {
+          if(res.data){
+            this.props.getTodos();
+            this.setState({action: ""})
+          }
+        })
+        .catch(err => console.log(err))
+    }else {
+      console.log('input field required')
+    }
+
+}
+
+handleChange = (e) => {
+this.setState({
+action: e.target.value
+})
+}
+
+render() {
+let { action } = this.state;
+return (
+<div>
+<input type="text" onChange={this.handleChange} value={action} />
+<button onClick={this.addTodo}>add todo</button>
+</div>
+)
+}
+}
+
+export default Input
+
+- Saved then exited
+
+Moved back to the src folder
+
+`cd ..`
+
+Move to clients folder
+
+`cd ..`
+
+Install Axios in the client folder with the command below
+ 
+`npm install axios`
+
+![Series](./Images/33-Series.png)
+
+Moved to the ‘components’ directory using the code below
+
+`cd src/components`
+
+ Opened ListTodo.js with
+
+`vi ListTodo.js` 
+
+see screenshot below
+
+![List todo](./Images/35--VI-listtodo.png) 
+
+Opened Todo.js file you write the following code as shown in screenshot below
+
+![Todo](./Images/36---VI-Todo.png) 
+
+- Made adjustment to the react code
+
+Moved to the src folder using the code below
+
+`cd ..`
+
+Ran `vi App.js` then wrote the code in it as shown in the screenshot below
+
+![App.js](./Images/37-VI--Appjs.png) 
+
+
+In the src directory opened the App.css with the code below and pasted the code as shown in the screenshot below
+
+`vi App.css`
+
+![App.css](./Images/38-Appcss.png) 
+
+Saved then exited
+
+In the src directory opened the index.css with the code below
+
+`vim index.css`
+
+ see screenshot below
+
+ ![Index.css](./Images/39--Index-css.png)
+
+ Moved to the Todo directory with the code below 
+
+ `cd ../..`
+  
+  Ran in the Todo directory `npm run dev`
+
+Screenshot Below
+
+![Index.css](./Images/40-run-dev.png)
+
+Output on the web browser, see screen shot below
+
+![Index.css](./Images/41-Finally.png)
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
